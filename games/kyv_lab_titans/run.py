@@ -10,21 +10,19 @@ from src.state.run_sims import create_books
 from src.write_data.write_configs import generate_configs
 
 if __name__ == "__main__":
-    num_threads = 10
-    rust_threads = 20
-    batching_size = 50000
+    num_threads = 1
+    rust_threads = 2
+    batching_size = 100
     compression = True
     profiling = False
 
-    num_sim_args = {
-        "base": int(1e3),
-    }
+    num_sim_args = {"base": 200}
 
     run_conditions = {
         "run_sims": True,
         "run_optimization": False,
         "run_analysis": False,
-        "run_format_checks": True,
+        "run_format_checks": False,
     }
     target_modes = ["base"]
 
