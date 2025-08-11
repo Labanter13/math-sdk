@@ -44,12 +44,13 @@ def get_distribution_moments(dist: dict) -> float:
 
     skewness, kurtosis = 0.0, 0.0
     av_win = float(av_win)
-    for win, weight in dist.items():
-        skewness += ((win - av_win) ** 3) * weight
-        kurtosis += ((win - av_win) ** 4) * weight
-    skewness /= (standard_dev) ** 3
-    kurtosis /= (standard_dev) ** 4
-    kurtosis -= 3
+    if standard_dev != 0:
+        for win, weight in dist.items():
+            skewness += ((win - av_win) ** 3) * weight
+            kurtosis += ((win - av_win) ** 4) * weight
+        skewness /= (standard_dev) ** 3
+        kurtosis /= (standard_dev) ** 4
+        kurtosis -= 3
 
     return variance, standard_dev, skewness, kurtosis
 
@@ -98,13 +99,14 @@ def prob_less_than_bet(dist: dict, bet_cost: float, total_weight=None):
 
 def non_zero_hitrate(dist: dict, total_weight=None):
     """Calculate probability of"""
-    if total_weight is not None:
+    if total_weight is None:
         total_weight = sum(list(dist.values()))
 
     if min(dist.keys()) == 0:
+        if dist[0] == total_weight:
+            return 0
         return 1 / (1 - dist[0] / total_weight)
-    else:
-        return 1
+    return 1
 
 
 def calculate_rtp(dist: dict, bet_cost: float, total_weight: float = None) -> float:
@@ -118,7 +120,10 @@ def min_dist_difference(dist: dict):
     """Minimum payout amount difference"""
     wins = list(dist.keys())
     diff = None
-    for i in range(len(wins) - 2):
-        if diff is None or (diff > abs(wins[i + 1]) - wins[i]):
-            diff = abs(wins[i + 1]) - wins[i]
+    for i in range(len(wins) - 1):
+        cur_diff = abs(wins[i + 1] - wins[i])
+        if diff is None or diff > cur_diff:
+            diff = cur_diff
+    if diff is None:
+        return 0
     return int(round(diff * 100))
