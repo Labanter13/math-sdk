@@ -11,7 +11,7 @@ class GameConfig(Config):
     def __init__(self):
         super().__init__()
         self.game_id = "kyv_lab_titans"
-        self.provider_numer = 0
+        self.provider_number = 0
         self.working_name = "Labyrinth of the Titans"
         self.wincap = 10000.0
         self.win_type = "cluster"
