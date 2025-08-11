@@ -22,7 +22,15 @@ class GameConfig(Config):
         self.num_reels = 6
         self.num_rows = [6] * self.num_reels
         # Board and Symbol Properties
-        t5, t6, t8, t10, t12, t15, t20 = (5, 5), (6, 7), (8, 9), (10, 11), (12, 14), (15, 19), (20, 36)
+        t5, t6, t8, t10, t12, t15, t20 = (
+            (5, 5),
+            (6, 7),
+            (8, 9),
+            (10, 11),
+            (12, 14),
+            (15, 19),
+            (20, 36),
+        )
         pay_group = {
             (t5, "TR"): 0.5,
             (t6, "TR"): 0.8,
@@ -97,8 +105,22 @@ class GameConfig(Config):
                 is_buybonus=False,
                 distributions=[
                     Distribution(
-                        criteria="basegame",
-                        quota=1.0,
+                        criteria="wincap",
+                        quota=0.001,
+                        win_criteria=self.wincap,
+                        conditions={
+                            "reel_weights": {
+                                self.basegame_type: {"BR0": 1},
+                                self.freegame_type: {"FR0": 1},
+                            },
+                            "scatter_triggers": {},
+                            "force_wincap": True,
+                            "force_freegame": True,
+                        },
+                    ),
+                    Distribution(
+                        criteria="freegame",
+                        quota=0.1,
                         conditions={
                             "reel_weights": {
                                 self.basegame_type: {"BR0": 1},
@@ -106,9 +128,28 @@ class GameConfig(Config):
                             },
                             "scatter_triggers": {},
                             "force_wincap": False,
+                            "force_freegame": True,
+                        },
+                    ),
+                    Distribution(
+                        criteria="0",
+                        quota=0.4,
+                        win_criteria=0.0,
+                        conditions={
+                            "reel_weights": {self.basegame_type: {"BR0": 1}},
+                            "force_wincap": False,
                             "force_freegame": False,
                         },
-                    )
+                    ),
+                    Distribution(
+                        criteria="basegame",
+                        quota=0.5,
+                        conditions={
+                            "reel_weights": {self.basegame_type: {"BR0": 1}},
+                            "force_wincap": False,
+                            "force_freegame": False,
+                        },
+                    ),
                 ],
             )
         ]
